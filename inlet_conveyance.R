@@ -283,11 +283,12 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
                                  dplyr::select("component_id", "test_date", "phase",
                                                "calculated_flow_rate_cfm", "equilibrated_flow_rate_cfm", "test_volume_cf",
                                                "max_water_depth_ft",
-                                               "surcharge", "time_to_surcharge_min"))
+                                               "surcharge", "time_to_surcharge_min") %>%
+                                 distinct())
       
       #show table of ICTs
       output$ict_table <- renderDT(
-        datatable(rv$ict_table(), 
+        datatable(rv$ict_table() %>% distinct(), 
                   colnames = c('Component ID', 'Test Date', 'Phase', 'Calculated Flow Rate (CFM)', 
                                'Equilibrated Flow Rate (CFM)', 'Test Volume (CF)', 'Max Water Depth (ft)',
                                'Surcharge', 'Time to Surcharge (min)'),
@@ -602,11 +603,12 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
                                  dplyr::select("system_id", "project_name", "component_id", "test_date", "phase",
                                                "calculated_flow_rate_cfm", "equilibrated_flow_rate_cfm", "test_volume_cf",
                                                "max_water_depth_ft", "surcharge", "time_to_surcharge_min", 
-                                               "photos_uploaded", "summary_report_sent", "turnaround_days", "notes"))
+                                               "photos_uploaded", "summary_report_sent", "turnaround_days", "notes") %>%
+                                 dplyr::distinct())
       
       #show table of ICTs
       output$all_ict_table <- renderReactable(
-        reactable(rv$all_ict_table()[, 1:14], 
+        reactable(rv$all_ict_table()[, 1:14] %>% distinct(), 
                   columns = list(
                     system_id = colDef(name = "System ID"),
                     project_name = colDef(name = "Project Name"),
@@ -690,11 +692,12 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
       rv$all_future_ict_table_db <- reactive(dbGetQuery(poolConn, rv$all_future_query()))
       rv$all_future_ict_table <- reactive(rv$all_future_ict_table_db() %>% 
                                      dplyr::select("system_id", "project_name", "component_id", "phase",
-                                                   "calculated_flow_rate_cfm", "field_test_priority", "notes"))
+                                                   "calculated_flow_rate_cfm", "field_test_priority", "notes") %>%
+                                     dplyr::distinct())
       
       #show table of ICTs
       output$all_future_ict_table <- renderReactable(
-        reactable(rv$all_future_ict_table()[, 1:6], 
+        reactable(rv$all_future_ict_table()[, 1:6] %>% distinct(), 
                   columns = list(
                     system_id = colDef(name = "System ID"),
                     project_name = colDef(name = "Project Name"),
