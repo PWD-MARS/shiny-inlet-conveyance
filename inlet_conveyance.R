@@ -283,12 +283,12 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
                                  dplyr::select("component_id", "test_date", "phase",
                                                "calculated_flow_rate_cfm", "equilibrated_flow_rate_cfm", "test_volume_cf",
                                                "max_water_depth_ft",
-                                               "surcharge", "time_to_surcharge_min") %>%
+                                               "surcharge", "time_to_surcharge_min", "inlet_conveyance_uid") %>%
                                  distinct())
       
       #show table of ICTs
       output$ict_table <- renderDT(
-        datatable(rv$ict_table() %>% distinct(), 
+        datatable(rv$ict_table() %>% select(-inlet_conveyance_uid), 
                   colnames = c('Component ID', 'Test Date', 'Phase', 'Calculated Flow Rate (CFM)', 
                                'Equilibrated Flow Rate (CFM)', 'Test Volume (CF)', 'Max Water Depth (ft)',
                                'Surcharge', 'Time to Surcharge (min)'),
@@ -315,7 +315,7 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
         rv$future_ict_table(), 
         selection = 'single', 
         style = 'bootstrap', 
-        class = 'table-responsive, table-hover', 
+        class = 'table-responsive, table-hover' ,
         colnames = c('System ID', 'Component ID',  'Phase', 'Calculated Flow Rate (CFM)', 'Priority', 'Notes')
         )
       )
@@ -329,20 +329,23 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
         #reset("comp_id")
         #reset("comp_id_custom")
         
-        #get facility id from table
-        rv$fac_step <- (rv$ict_table_db()$facility_id[input$ict_table_rows_selected])
+        # get the selected uid's features
+        rv$selected_ict_features <- reactive(rv$ict_table_db() %>% filter(inlet_conveyance_uid == rv$ict_table()$inlet_conveyance_uid[input$ict_table_rows_selected]) %>% distinct())
         
+        #get facility id from table
+        rv$fac_step <- (rv$selected_ict_features()$facility_id)
+
         rv$fac <- if(is.na(rv$fac_step)) "NULL" else paste0("'", rv$fac_step, "'")
-          
+
         #get component id
         comp_id_query <- paste0("select distinct component_id from external.mat_assets_ict_limited where facility_id = ", rv$fac, "
             AND component_id IS NOT NULL")
         comp_id_step <- odbc::dbGetQuery(poolConn, comp_id_query) %>% pull()
         #determine whether component id exists and is useful
         comp_id_click <- if(length(comp_id_step) > 0) comp_id_step else "NA"
-        
+
         #get asset type - base on component id (if exists)
-        
+
         if(nchar(comp_id_click) > 2){
           asset_type_click <- dplyr::filter(rv$asset_comp(), component_id == comp_id_click) %>% select(asset_type) %>% pull()
           #combine asset type, ow, and component id
@@ -351,20 +354,20 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
           updateSelectInput(session, "comp_id", selected = rv$asset_comp_code_click)
         }else{
           updateSelectInput(session, "comp_id", selected = "")
-          updateSelectInput(session, "comp_id_custom", selected = rv$ict_table_db()$component_id[input$ict_table_rows_selected])
+          updateSelectInput(session, "comp_id_custom", selected = rv$selected_ict_features()$component_id)
         }
-        
-        updateDateInput(session, "date", value = rv$ict_table_db()$test_date[input$ict_table_rows_selected])
-        updateSelectInput(session, "con_phase", selected = rv$ict_table_db()$phase[input$ict_table_rows_selected])
-         updateNumericInput(session, "calc_flow_rate", value = rv$ict_table_db()$calculated_flow_rate_cfm[input$ict_table_rows_selected])
-         updateNumericInput(session, "eq_flow_rate", value = rv$ict_table_db()$equilibrated_flow_rate_cfm[input$ict_table_rows_selected])
-         updateNumericInput(session, "test_volume_cf", value = rv$ict_table_db()$test_volume_cf[input$ict_table_rows_selected])
-         updateNumericInput(session, "max_water_depth_ft", value = rv$ict_table_db()$max_water_depth_ft[input$ict_table_rows_selected])
-         updateNumericInput(session, "time_to_surcharge", value = rv$ict_table_db()$time_to_surcharge_min[input$ict_table_rows_selected])
-        updateSelectInput(session, "surcharge", selected = rv$ict_table_db()$surcharge[input$ict_table_rows_selected])
-        updateSelectInput(session, "photos", selected = rv$ict_table_db()$photos_uploaded[input$ict_table_rows_selected])
-        updateDateInput(session, "summary_sent", value = rv$ict_table_db()$summary_report_sent[input$ict_table_rows_selected])
-        updateTextAreaInput(session, "notes", value = rv$ict_table_db()$notes[input$ict_table_rows_selected])
+
+        updateDateInput(session, "date", value = rv$selected_ict_features()$test_date)
+        updateSelectInput(session, "con_phase", selected = rv$selected_ict_features()$phase)
+         updateNumericInput(session, "calc_flow_rate", value = rv$selected_ict_features()$calculated_flow_rate_cfm)
+         updateNumericInput(session, "eq_flow_rate", value = rv$selected_ict_features()$equilibrated_flow_rate_cfm)
+         updateNumericInput(session, "test_volume_cf", value = rv$selected_ict_features()$test_volume_cf)
+         updateNumericInput(session, "max_water_depth_ft", value = rv$selected_ict_features()$max_water_depth_ft)
+         updateNumericInput(session, "time_to_surcharge", value = rv$selected_ict_features()$time_to_surcharge_min)
+        updateSelectInput(session, "surcharge", selected = rv$selected_ict_features()$surcharge)
+        updateSelectInput(session, "photos", selected = rv$selected_ict_features()$photos_uploaded)
+        updateDateInput(session, "summary_sent", value = rv$selected_ict_features()$summary_report_sent)
+        updateTextAreaInput(session, "notes", value = rv$selected_ict_features()$notes)
         reset("priority")
       })
       
