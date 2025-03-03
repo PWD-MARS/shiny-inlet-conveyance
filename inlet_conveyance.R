@@ -658,9 +658,14 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
         )
         )
       
+      
+      # select row from second tab of the app
+      rv$all_ict_row <- reactive(getReactableState("all_ict_table","selected"))
+      
       #2.2.2 click a row ----
       #select row in full ict table
       observeEvent(input$ict_selected, {
+        
         
         #set all inputs to null
         updateSelectizeInput(session, "system_id", selected = character(0))
@@ -668,20 +673,20 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
         updateSelectInput(session, "site_name", selected = "")
         
         #check for system id, then work number, then site name
-        if(!is.na(rv$all_ict_table_db()$system_id[input$ict_selected])){
+        if(!is.na(rv$all_ict_table()$system_id[rv$all_ict_row()])){
             updateSelectizeInput(session, "system_id", choices = sys_id,
-                             selected = rv$all_ict_table_db()$system_id[input$ict_selected], 
+                             selected = rv$all_ict_table()$system_id[rv$all_ict_row()], 
                              server = TRUE)
-        }else if(!is.na(rv$all_ict_table_db()$work_number[input$ict_selected])){
-           updateSelectInput(session, "work_number", selected = rv$all_ict_table_db()$work_number[input$ict_selected])
-        }else if(!is.na(rv$all_ict_table_db()$site_name[input$ict_selected]) > 0){
-            updateSelectInput(session, "site_name", selected = rv$all_ict_table_db()$site_name[input$ict_selected])
+        }else if(!is.na(rv$all_ict_table()$work_number[rv$all_ict_row()])){
+           updateSelectInput(session, "work_number", selected = rv$all_ict_table()$work_number[rv$all_ict_row()])
+        }else if(!is.na(rv$all_ict_table()$site_name[rv$all_ict_row()]) > 0){
+            updateSelectInput(session, "site_name", selected = rv$all_ict_table()$site_name[rv$all_ict_row()])
         }
         
         updateTabsetPanel(session = parent_session, "inTabset", selected = "ict_tab")
         updateReactable("all_future_ict_table", selected = NA)
         delay(300, {
-            ict_row <- which(rv$ict_table_db()$inlet_conveyance_uid == rv$all_ict_table_db()$inlet_conveyance_uid[input$ict_selected], arr.ind = TRUE)
+            ict_row <- which(rv$ict_table_db()$inlet_conveyance_uid == rv$all_ict_table()$inlet_conveyance_uid[rv$all_ict_row()], arr.ind = TRUE)
             dataTableProxy('ict_table') %>% selectRows(ict_row)
         })
       })
