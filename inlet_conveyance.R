@@ -692,6 +692,23 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
             ict_row <- which(rv$ict_table_db()$inlet_conveyance_uid == rv$all_ict_table()$inlet_conveyance_uid[rv$all_ict_row()], arr.ind = TRUE)
             dataTableProxy('ict_table') %>% selectRows(ict_row)
         })
+        
+        
+        reset("comp_id")
+        reset("comp_id_custom")
+        reset("date")
+        reset("con_phase")
+        reset("calc_flow_rate")
+        reset("eq_flow_rate")
+        reset("test_volume_cf")
+        reset("max_water_depth_ft")
+        reset("surcharge")
+        reset("time_to_surcharge")
+        reset("photos")
+        reset("summary_sent")
+        reset("priority")
+        reset("notes")
+        
       })
       
       #2.3 View Future ICTs ------
