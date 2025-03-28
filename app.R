@@ -36,7 +36,7 @@ options(DT.options = list(pageLength = 15))
 #poolConn <- dbConnect(odbc::odbc(), dsn = "mars14_datav2", uid = Sys.getenv("shiny_uid"), pwd = Sys.getenv("shiny_pwd"))
 
 # DB connections & functions
-poolConn <- dbConnect(RPostgres::Postgres(),
+poolConn <- dbPool(RPostgres::Postgres(),
                       host = "PWDMARSDBS1.pwd.phila.local",
                       port = 5434,
                       dbname = "mars_data",
