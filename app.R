@@ -22,6 +22,8 @@ library(shinyjs)
 library(DT)
 #reactable for reactable tables
 library(reactable)
+# driver
+library(RPostgres)
 
 #0.1: database connection and global options --------
 
@@ -31,7 +33,16 @@ options(DT.options = list(pageLength = 15))
 #set db connection
 #using a pool connection so separate connnections are unified
 #gets environmental variables saved in local or pwdrstudio environment
-poolConn <- dbConnect(odbc::odbc(), dsn = "mars14_datav2", uid = Sys.getenv("shiny_uid"), pwd = Sys.getenv("shiny_pwd"))
+#poolConn <- dbConnect(odbc::odbc(), dsn = "mars14_datav2", uid = Sys.getenv("shiny_uid"), pwd = Sys.getenv("shiny_pwd"))
+
+# DB connections & functions
+poolConn <- dbConnect(RPostgres::Postgres(),
+                      host = "PWDMARSDBS1.pwd.phila.local",
+                      port = 5434,
+                      dbname = "mars_data",
+                      user = Sys.getenv("shiny_uid"),
+                      password = Sys.getenv("shiny_pwd")
+)
 
 #js warning about leaving page
 jscode <- 'window.onbeforeunload = function() { return "Please use the button on the webpage"; };'
