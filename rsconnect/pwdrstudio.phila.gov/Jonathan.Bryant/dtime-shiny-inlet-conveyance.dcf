@@ -1,0 +1,12 @@
+name: dtime-shiny-inlet-conveyance
+title: dtime-shiny-inlet-conveyance
+username: Jonathan.Bryant
+account: Jonathan.Bryant
+server: pwdrstudio.phila.gov
+hostUrl: https://pwdrstudio.phila.gov/__api__
+appId: 513
+bundleId: 3284
+url: https://pwdrstudio.phila.gov/content/00527f37-fff6-46c5-adca-2de5f6dafe42/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
