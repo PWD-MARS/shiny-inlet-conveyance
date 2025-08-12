@@ -11,6 +11,8 @@ inlet_conveyanceUI <- function(id, label = "inlet_conveyance", site_names, html_
                       #1.1.1 sidebarPanel ----
                       sidebarPanel(
                         style = "overflow-y:scroll; overflow-x:hidden; max-height: 650px",
+                        #Debug button
+                        actionButton(ns("BrowserButton"), "Click to Browse"),
                                   h5("Prioritize System ID, then Work Number, then Site Name. Only one is required."),
                                   fluidRow(
                                     column(4, selectizeInput(ns("system_id"), future_req(html_req("System ID")), 
@@ -92,6 +94,10 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
     function(input, output, session){
   
       
+      # Debugging Button
+      observeEvent(input$BrowserButton,
+                   {browser()})
+
       #2.0.1 set up ----
       #define ns to use in modals 
       ns <- session$ns
