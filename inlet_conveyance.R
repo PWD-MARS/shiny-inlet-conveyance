@@ -11,6 +11,9 @@ inlet_conveyanceUI <- function(id, label = "inlet_conveyance", site_names, html_
                       #1.1.1 sidebarPanel ----
                       sidebarPanel(
                         style = "overflow-y:scroll; overflow-x:hidden; max-height: 650px",
+                        #Debug button
+                        #Comment out before publishing
+                        #actionButton(ns("BrowserButton"), "Click to Browse"),
                                   h5("Prioritize System ID, then Work Number, then Site Name. Only one is required."),
                                   fluidRow(
                                     column(4, selectizeInput(ns("system_id"), future_req(html_req("System ID")), 
@@ -40,12 +43,12 @@ inlet_conveyanceUI <- function(id, label = "inlet_conveyance", site_names, html_
                                  ),
                                  fluidRow(
                                    column(6, selectInput(ns("surcharge"), "Surcharge", 
-                                                         choices = c("","Yes" = "1", "No" = "0"), selected = NULL)), 
+                                                         choices = c("",TRUE, FALSE), selected = NULL)), 
                                    column(6, numericInput(ns("time_to_surcharge"), "Time to Surcharge (min)", value = NA))
                                  ), 
                                  fluidRow(
                                    column(6, selectInput(ns("photos"), "Photos Uploaded", 
-                                                         choices = c("","Yes" = "1", "No" = "0"), selected = NULL)), 
+                                                         choices = c("",TRUE, FALSE), selected = NULL)), 
                                    column(6, dateInput(ns("summary_sent"), "Summary Date", 
                                                          value = NA))
                                  ),
@@ -92,6 +95,11 @@ inlet_conveyanceServer <- function(id, parent_session, poolConn, con_phase, sys_
     function(input, output, session){
   
       
+      # Debugging Button
+      # Comment out before publishing
+      # observeEvent(input$BrowserButton,
+      #              {browser()})
+
       #2.0.1 set up ----
       #define ns to use in modals 
       ns <- session$ns
