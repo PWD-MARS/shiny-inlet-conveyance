@@ -1,0 +1,12 @@
+name: shiny-inlet-conveyance
+title: shiny-inlet-conveyance
+username: monica.gucciardi
+account: monica.gucciardi
+server: pwdrstudio.phila.gov
+hostUrl: https://pwdrstudio.phila.gov/__api__
+appId: 543
+bundleId: 3507
+url: https://pwdrstudio.phila.gov/content/c5a06520-eb80-49d0-9c03-e10bbe5648fd/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
