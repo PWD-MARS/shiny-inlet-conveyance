@@ -43,12 +43,12 @@ inlet_conveyanceUI <- function(id, label = "inlet_conveyance", site_names, html_
                                  ),
                                  fluidRow(
                                    column(6, selectInput(ns("surcharge"), "Surcharge", 
-                                                         choices = c("","Yes" = "1", "No" = "0"), selected = NULL)), 
+                                                         choices = c("",TRUE, FALSE), selected = NULL)), 
                                    column(6, numericInput(ns("time_to_surcharge"), "Time to Surcharge (min)", value = NA))
                                  ), 
                                  fluidRow(
                                    column(6, selectInput(ns("photos"), "Photos Uploaded", 
-                                                         choices = c("","Yes" = "1", "No" = "0"), selected = NULL)), 
+                                                         choices = c("",TRUE, FALSE), selected = NULL)), 
                                    column(6, dateInput(ns("summary_sent"), "Summary Date", 
                                                          value = NA))
                                  ),
